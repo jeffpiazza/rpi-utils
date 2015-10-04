@@ -1,0 +1,67 @@
+#!/usr/bin/python
+import RPi.GPIO as GPIO
+import sys
+import time
+
+GPIO.setmode(GPIO.BCM)
+
+# Relays 1 through 8, in order
+pins = [11, 9, 10, 24, 23, 22, 27, 17]
+
+# Not completely sure which is upstairs and which downstairs
+pin_names = ['upstairs','downstairs','hotwater','','','pump','','']
+
+# Returns the GPIO pin number to manipulate.  'pin' is either a pin
+# name (string) or an integer, 1-8.
+def pin_index(pin):
+  for index in range(len(pin_names)):
+    if pin_names[index] == pin:
+      return pins[index]
+  try:
+    return pins[int(pin) - 1]
+  except ValueError:
+    print "Unrecognized pin:",pin
+    sys.exit(1)
+
+GPIO.setwarnings(False)
+#RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
+
+# Set up all the pins we're using
+for p in pins:
+  GPIO.setup(p, GPIO.LOW)
+
+if len(sys.argv) == 1:
+  print "Using GPIO version",GPIO.VERSION
+  print
+  print "Usage:"
+  print sys.argv[0],"status"
+  print sys.argv[0],"test"
+  print sys.argv[0],"[pin] on"
+  print sys.argv[0],"[pin] off"
+elif len(sys.argv) == 2:
+  if sys.argv[1] == 'test':
+    # Test and reset
+    for p in pins:
+      GPIO.output(p, GPIO.LOW)
+      time.sleep(0.125)
+      GPIO.output(p, GPIO.HIGH)
+  elif sys.argv[1] == 'status':
+    for pin_index in range(1,9):
+      p = pins[pin_index - 1]
+      state = "*ON* " if GPIO.input(p) == 0 else " off"
+      print "Pin",pin_index,state,pin_names[pin_index - 1]
+  else:
+    print "Unrecognized command:",sys.argv[1]
+elif len(sys.argv) == 3:
+  p = pin_index(sys.argv[1])
+  if sys.argv[2] == 'on':
+    GPIO.output(p, GPIO.LOW);
+  elif sys.argv[2] == 'off':
+    GPIO.output(p, GPIO.HIGH);
+  else:
+    print "Unrecognized command,",sys.argv[2],"for pin",sys.argv[1]
+else:
+  print "Unrecognized command line arguments",len(sys.argv)
+  for a in sys.argv:
+    print "Argument:",a
+
