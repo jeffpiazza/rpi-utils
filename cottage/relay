@@ -6,7 +6,10 @@ import time
 GPIO.setmode(GPIO.BCM)
 
 # Relays 1 through 8, in order
-pins = [11, 9, 10, 24, 23, 22, 27, 17]
+# v1
+# pins = [11, 9, 10, 24, 23, 22, 27, 17]
+# v2
+pins = [18, 25, 10, 24, 23, 22, 27, 17]
 
 # Not completely sure which is upstairs and which downstairs
 pin_names = ['upstairs','downstairs','hotwater','','','pump','','']
