@@ -53,6 +53,9 @@ elif len(sys.argv) == 2:
       p = pins[pin_index - 1]
       state = "*ON* " if GPIO.input(p) == 0 else " off"
       print "Pin",pin_index,state,pin_names[pin_index - 1]
+  elif sys.argv[1] == 'off' or sys.argv[1] == 'on':
+    for pin_index in range(1,9):
+      GPIO.output(pins[pin_index - 1], GPIO.LOW if sys.argv[1] == 'on' else GPIO.HIGH)
   else:
     print "Unrecognized command:",sys.argv[1]
 elif len(sys.argv) == 3:
